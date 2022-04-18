@@ -8,7 +8,6 @@ import { TransactionTypes, CardInsertData, CardUpdateData } from '../repositorie
 import { faker } from '@faker-js/faker';
 import dayjs from 'dayjs';
 import bcrypt from 'bcrypt';
-import { any } from 'joi';
 
 const regexMasterCard = /^(5[1-5][0-9]{14}|2(22[1-9][0-9]{12}|2[3-9][0-9]{13}|[3-6][0-9]{14}|7[0-1][0-9]{13}|720[0-9]{12}))$/;
 
