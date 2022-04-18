@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon src/server.ts",
+    "dev": "fuser -k 5000/tcp && nodemon src/server.ts",
     "start": "node dist/src/server.js",
     "build": "tsc"
   },

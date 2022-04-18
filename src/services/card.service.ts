@@ -2,10 +2,13 @@ import * as errorType from '../utils/errorTypes.utils';
 import * as companyRepository from '../repositories/companyRepository';
 import * as cardRepository from '../repositories/cardRepository';
 import * as employeeRepository from '../repositories/employeeRepository';
+import * as paymentService from './payment.service';
+import * as rechargeService from './recharge.service';
 import { TransactionTypes, CardInsertData, CardUpdateData } from '../repositories/cardRepository';
 import { faker } from '@faker-js/faker';
 import dayjs from 'dayjs';
 import bcrypt from 'bcrypt';
+import { any } from 'joi';
 
 const regexMasterCard = /^(5[1-5][0-9]{14}|2(22[1-9][0-9]{12}|2[3-9][0-9]{13}|[3-6][0-9]{14}|7[0-1][0-9]{13}|720[0-9]{12}))$/;
 
@@ -211,4 +214,33 @@ function isNumber(n: string | number | undefined) {
 
 export async function cardActive(cardId: number, card: CardUpdateData, encryptedCardPassword: string) {
   await cardRepository.update(cardId, { ...card, password: encryptedCardPassword });
+}
+
+export function checkCardPasswordIsValid(cardPassword: string, password: string) {
+  if (!bcrypt.compareSync(cardPassword, password)) {
+    throw errorType.unprocessableEntity('Senha do cartão esta errada.');
+  }
+}
+
+function generateBalanceCard(transactions: any[], recharges: any[]) {
+  const totalAmountTransactions = addAllAmount(transactions);
+  const totalAmountRecharges = addAllAmount(recharges);
+
+  return totalAmountRecharges - totalAmountTransactions;
+}
+
+function addAllAmount(arrayWithAmounts: any[]) {
+  return arrayWithAmounts.map(({ amount }) => amount)
+    .reduce((previousValue, currentValue) =>
+      previousValue + currentValue, 0
+    )
+}
+
+export async function getBalance(cardId: number) {
+  const transactions = await paymentService.findPayments(cardId);
+  const recharges = await rechargeService.findRecharges(cardId);
+
+  const balance = generateBalanceCard(transactions, recharges);
+
+  return { balance, transactions, recharges };
 }
