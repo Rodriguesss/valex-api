@@ -94,9 +94,9 @@ export function mountsCardHolderName(firstName: string, middleName: string, last
   const middleNameExists = middleName.length > 0;
 
   if (middleNameExists) {
-    return `${firstName} ${middleName} ${lastName}`;
+    return `${firstName} ${middleName} ${lastName}`.toLocaleUpperCase();
   } else {
-    return `${firstName} ${lastName}`;
+    return `${firstName} ${lastName}`.toLocaleUpperCase();
   }
 }
 
