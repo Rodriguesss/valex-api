@@ -1,5 +1,5 @@
-import { connection } from "../database.js";
-import { mapObjectToUpdateQuery } from "../utils/sqlUtils.js";
+import { connection } from "../database";
+import { mapObjectToUpdateQuery } from "../../utils/sqlUtils";
 
 export type TransactionTypes =
   | "groceries"
@@ -103,11 +103,13 @@ export async function insert(cardData: CardInsertData) {
 }
 
 export async function update(id: number, cardData: CardUpdateData) {
+  const offset = 2;
+
   const { objectColumns: cardColumns, objectValues: cardValues } =
-    mapObjectToUpdateQuery({
-      object: cardData,
-      offset: 2,
-    });
+    mapObjectToUpdateQuery(
+      cardData,
+      offset,
+    );
 
   connection.query(
     `
